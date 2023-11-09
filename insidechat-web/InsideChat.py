@@ -82,7 +82,7 @@ def main():
         st.subheader("Tus documentos")
         pdf_docs = st.file_uploader(
             "Carga tus documentos PDFs aqui y dale click a 'Procesar'", 
-            accept_multiple_files=True, type=["pdf"])
+            accept_multiple_files=True)
 
         # Estilos predeterminados
         st.markdown("""
@@ -100,22 +100,28 @@ def main():
         """, unsafe_allow_html=True)
 
           # Mostrar el botón solo si se han subido documentos PDF
-        if pdf_docs:
-            st.write("¡Super! Ya tenemos tus archivos, ahora dale a 'Procesar' ⤵️ ")
-            if st.button("Procesar", key="procesar_button", help="Haz clic para procesar"):
-                with st.spinner("Procesando"):
-                    # get pdf text
-                    raw_text = get_pdf_text(pdf_docs)
+    if pdf_docs:
+            # Verificar que todos los archivos tengan la extensión .pdf
+            pdf_files = [file for file in pdf_docs if file.name.lower().endswith('.pdf')]
 
-                    # get the text chunks
-                    text_chunks = get_text_chunks(raw_text)
+            if pdf_files:
+                st.write("¡Super! Ya tenemos tus archivos, ahora dale a 'Procesar' ⤵️ ")
+                if st.button("Procesar", key="procesar_button", help="Haz clic para procesar"):
+                    with st.spinner("Procesando"):
+                        # get pdf text
+                        raw_text = get_pdf_text(pdf_files)
 
-                    # create vector store
-                    vectorstore = get_vectorstore(text_chunks)
+                        # get the text chunks
+                        text_chunks = get_text_chunks(raw_text)
 
-                    # create conversation chain
-                    st.session_state.conversation = get_conversation_chain(
-                        vectorstore)
+                        # create vector store
+                        vectorstore = get_vectorstore(text_chunks)
+
+                        # create conversation chain
+                        st.session_state.conversation = get_conversation_chain(
+                            vectorstore)
+            else:
+                st.warning(" ⚠️ Por favor, sube solo archivos PDF 📋 ")
                 
 if __name__ == '__main__':
     main()
