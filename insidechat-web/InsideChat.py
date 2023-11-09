@@ -47,7 +47,7 @@ def get_conversation_chain(vectorstore):
 
 def handle_userinput(user_question):
     with st.spinner("Procesando..."):
-     response = st.session_state.conversation({"question": user_question, "chat_history": st.session_state.chat_history})
+        response = st.session_state.conversation({"question": user_question, "chat_history": st.session_state.chat_history})
     st.session_state.chat_history.append((user_question, response["answer"]))
 
     history = st.session_state.chat_history[::-1]
@@ -99,8 +99,8 @@ def main():
             </style>
         """, unsafe_allow_html=True)
 
-          # Mostrar el botón solo si se han subido documentos PDF
-    if pdf_docs:
+        # Mostrar el botón solo si se han subido documentos PDF
+        if pdf_docs:
             # Verificar que todos los archivos tengan la extensión .pdf
             pdf_files = [file for file in pdf_docs if file.name.lower().endswith('.pdf')]
 
