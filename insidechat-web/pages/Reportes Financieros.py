@@ -54,13 +54,50 @@ def handle_userinput(user_question):
     for message in history:
         st.write(bot_template.replace("{{MSG}}", message[1]), unsafe_allow_html=True)
         st.write(user_template.replace("{{MSG}}", message[0]), unsafe_allow_html=True)
-        
+
+  
 def main():
     load_dotenv()
     st.set_page_config(page_title="Consulta tus PDFs",
                        page_icon=":books:")
     st.write(css, unsafe_allow_html=True)
+# Define the URL with query parameters
+    url = "https://insidechat.online/pre-venta/"
 
+# Estilos del botón
+    button_style = """
+        <style>
+            .button-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+            }
+            a {
+                text-decoration: none;
+            }
+            button {
+                background-color: green;
+                color: white;
+                font-size: 16px;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            button:hover {
+                opacity: 0.8;
+            }
+        </style>
+        """
+
+# Crear el botón con el enlace y aplicar estilos
+    button = f'{button_style}<div class="button-container"><a href="{url}" target="_blank"><button>Me gusta, Quiero Suscribirme</button></a></div>'
+
+    with st.sidebar:
+        st.markdown(button, unsafe_allow_html=True)
+
+        
     tab1, tab2 = st.tabs([
     "Empezar Chat 🤖", 
     "Sube Tus Archivos 💾"]
@@ -122,7 +159,8 @@ def main():
                             vectorstore)
             else:
                 st.warning(" ⚠️ Por favor, sube solo archivos PDF 📋 ")
-                
+
+
 if __name__ == '__main__':
     main()
 
