@@ -28,7 +28,7 @@ css = '''
 bot_template = '''
 <div class="chat-message bot">
     <div class="avatar">
-        <img src="https://lirp.cdn-website.com/15d8e6a3/dms3rep/multi/opt/Icono-Cranealo2-1-154w.png" style="max-height: 78px; max-width: 78px; border-radius: 50%; object-fit: cover;">
+        <img src="https://img.freepik.com/free-vector/cute-artificial-intelligence-robot-isometric-icon_1284-63045.jpg?w=1480&t=st=1699534379~exp=1699534979~hmac=6ba5f0e997fb23c52fb05e61c4531f82790d52d837d0dd18b9801f05001dc0e0" style="max-height: 78px; max-width: 78px; border-radius: 50%; object-fit: cover;">
     </div>
     <div class="message">{{MSG}}</div>
 </div>
