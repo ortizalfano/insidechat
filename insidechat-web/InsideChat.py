@@ -46,18 +46,14 @@ def get_conversation_chain(vectorstore):
     return conversation_chain
 
 def handle_userinput(user_question):
-    response = st.session_state.conversation({"question": user_question, "chat_history": st.session_state.chat_history})    
+    with st.spinner("Procesando..."):
+     response = st.session_state.conversation({"question": user_question, "chat_history": st.session_state.chat_history})
     st.session_state.chat_history.append((user_question, response["answer"]))
 
-    history =  st.session_state.chat_history[::-1]
+    history = st.session_state.chat_history[::-1]
     for message in history:
-        st.write(bot_template.replace(
-                "{{MSG}}", message[1]), unsafe_allow_html=True)
-        st.write(user_template.replace(
-                "{{MSG}}", message[0]), unsafe_allow_html=True)
-        
-
-
+        st.write(bot_template.replace("{{MSG}}", message[1]), unsafe_allow_html=True)
+        st.write(user_template.replace("{{MSG}}", message[0]), unsafe_allow_html=True)
         
 def main():
     load_dotenv()
@@ -74,42 +70,61 @@ def main():
         st.session_state.conversation = None
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []  # Inicializa chat_history como una lista vacía
-
-
-    with tab1:
-         st.header("Consulta tus documentos PDFs :books:")
-    user_question = st.text_input("Haz una pregunta sobre tus documentos:")
-    if user_question:
-        handle_userinput(user_question)
     
+    with tab1:
+        st.header("Consulta tus documentos PDFs :books:")
+        user_question = st.text_input("Haz una pregunta sobre tus documentos:")
+        if user_question:
+            handle_userinput(user_question)
+
+
     with tab2:
         st.subheader("Tus documentos")
         pdf_docs = st.file_uploader(
-            "Carga tus documentos PDFs aqui y dale click a 'Procesar'", accept_multiple_files=True)
-        if st.button("Procesar"):
-            with st.spinner("Procesando"):
-                # get pdf text
-                raw_text = get_pdf_text(pdf_docs)
+            "Carga tus documentos PDFs aqui y dale click a 'Procesar'", 
+            accept_multiple_files=True, type=["pdf"])
 
-                # get the text chunks
-                text_chunks = get_text_chunks(raw_text)
+        # Estilos predeterminados
+        st.markdown("""
+            <style>
+                .stButton button {
+                    background-color: green;
+                    color: white;
+                    font-size: 30px;
+                    padding: 15px 30px;
+                }
+                .stButton button:hover {
+                    color: #e0e0e0; /* Gris claro */
+                }
+            </style>
+        """, unsafe_allow_html=True)
 
-                # create vector store
-                vectorstore = get_vectorstore(text_chunks)
+          # Mostrar el botón solo si se han subido documentos PDF
+        if pdf_docs:
+            st.write("¡Super! Ya tenemos tus archivos, ahora dale a 'Procesar' ⤵️ ")
+            if st.button("Procesar", key="procesar_button", help="Haz clic para procesar"):
+                with st.spinner("Procesando"):
+                    # get pdf text
+                    raw_text = get_pdf_text(pdf_docs)
 
-                # create conversation chain
-                st.session_state.conversation = get_conversation_chain(
-                    vectorstore)
+                    # get the text chunks
+                    text_chunks = get_text_chunks(raw_text)
+
+                    # create vector store
+                    vectorstore = get_vectorstore(text_chunks)
+
+                    # create conversation chain
+                    st.session_state.conversation = get_conversation_chain(
+                        vectorstore)
                 
 if __name__ == '__main__':
     main()
 
-
-hide_st_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_st_style, unsafe_allow_html=True)
+#hide_st_style = """
+#            <style>
+#            #MainMenu {visibility: hidden;}
+#            footer {visibility: hidden;}
+#            header {visibility: hidden;}
+#            </style>
+#           """
+#st.markdown(hide_st_style, unsafe_allow_html=True)
